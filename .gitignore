@@ -1,24 +1,37 @@
+# ===============================================
+# VisionBox - Software
+# ===============================================
+
 # Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-*.egg-info/
+*.pyc
 
-# Virtual environments
+# Virtual Environment
+.venv/
 venv/
-.env/
+
+# Environment Variables
+.env
 
 # IDE
 .vscode/
-.idea/
-
-# Database
-*.db
+.idea
 
 # Logs
 *.log
 
-# OS
+# Database
+*.db
+*.sqlite3
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Operating System
 .DS_Store
 Thumbs.db
