@@ -31,4 +31,7 @@ def root():
         "message": "Welcome to the VisionBox API",
     }
 
-app.include_router(health_router, prefix="/api")
+app.include_router(
+    health_router, 
+    prefix=settings.API_PREFIX
+)
