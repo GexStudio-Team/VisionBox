@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.core.config import settings
-from app.api.health import router as health_router
+from app.api.router import api_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -31,7 +31,4 @@ def root():
         "message": "Welcome to the VisionBox API",
     }
 
-app.include_router(
-    health_router, 
-    prefix=settings.API_PREFIX
-)
+app.include_router(api_router)
