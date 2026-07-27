@@ -5,7 +5,7 @@ from app.core.config import settings
 router = APIRouter()
 
 @router.get(
-    "/health",
+    "/v1/health",
     tags=["System"],
     summary="Health check",
     description="Returns the current status of the VisionBox backend",
