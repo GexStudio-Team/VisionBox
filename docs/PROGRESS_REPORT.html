@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VisionBots · Informe de avance</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1c2330;
+    --border: #2a3140;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #4cc2ff;
+    --accent-2: #2dd4bf;
+    --ok: #3fb950;
+    --warn: #d29922;
+    --danger: #f85149;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 80px; }
+
+  header.hero {
+    margin: 0 -24px 40px;
+    padding: 56px 24px 40px;
+    background: radial-gradient(1200px 400px at 50% -100px, #1b3a55 0%, transparent 60%),
+                linear-gradient(180deg, #12212e 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .badge-top {
+    display: inline-block; font-size: 12px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent);
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 18px;
+    background: rgba(76,194,255,.08);
+  }
+  header.hero h1 { font-size: 44px; font-weight: 800; letter-spacing: -.5px; }
+  header.hero p.sub { margin-top: 10px; color: var(--muted); font-size: 17px; max-width: 640px; }
+  .status-pills { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 999px; font-size: 13px;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+  .dot.muted { background: var(--muted); }
+
+  h2.section {
+    font-size: 22px; font-weight: 700; margin: 56px 0 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2.section::after {
+    content: ""; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+  }
+  .card .num { font-size: 34px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+  .card .lbl { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .card .desc { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } header.hero h1 { font-size: 32px; } }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px;
+  }
+  .panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--accent-2); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  td.mono { font-family: Consolas, monospace; font-size: 13px; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 999px; letter-spacing: .3px;
+  }
+  .tag.ok { background: rgba(63,185,80,.15); color: var(--ok); border: 1px solid rgba(63,185,80,.4); }
+  .tag.warn { background: rgba(210,153,34,.12); color: var(--warn); border: 1px solid rgba(210,153,34,.4); }
+  .tag.info { background: rgba(76,194,255,.12); color: var(--accent); border: 1px solid rgba(76,194,255,.4); }
+
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    flex: 0 0 34px; height: 34px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--accent);
+  }
+  .step-num.done { color: var(--ok); border-color: rgba(63,185,80,.4); }
+  .steps b { font-size: 15px; }
+  .steps p { color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+
+  pre {
+    background: #0d1320; border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; font-size: 13px; overflow-x: auto;
+    font-family: Consolas, monospace; color: #c9d4e3; margin-top: 10px;
+  }
+  code.inline {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 1px 7px; font-size: 12.5px; font-family: Consolas, monospace;
+  }
+  .urlbar {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-family: Consolas, monospace; font-size: 13.5px; color: var(--accent-2);
+  }
+  footer { margin-top: 72px; text-align: center; color: var(--muted); font-size: 12.5px; }
+  .progress-track { background: var(--surface-2); border-radius: 999px; height: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 70%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <span class="badge-top">Producto · Fase 1 · MVP</span>
+    <h1>VisionBots · Informe de avance</h1>
+    <p class="sub">Estado real del sistema al 5 de septiembre de 2026: infraestructura instalada, API con
+    inventario sobre PostgreSQL y panel web compilado y funcional.</p>
+    <div class="status-pills">
+      <span class="pill"><span class="dot ok"></span> WSL 2 + Ubuntu 26.04</span>
+      <span class="pill"><span class="dot ok"></span> PostgreSQL 18.6</span>
+      <span class="pill"><span class="dot ok"></span> API FastAPI online</span>
+      <span class="pill"><span class="dot ok"></span> Frontend React compilado</span>
+      <span class="pill"><span class="dot muted"></span> IA real: pendiente</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2 class="section">Qué es VisionBots</h2>
+  <p style="color:var(--muted); max-width: 820px;">
+    Una caja inteligente que reconoce objetos con cámara e IA, los registra automáticamente y permite
+    gestionarlos desde una web: saber qué hay, dónde está y su historial. El MVP actual ya sirve para
+    <b style="color:var(--text)">registrar y consultar el inventario de forma manual</b> mientras la IA
+    se entrena con las imágenes que se vayan recolectando.
+  </p>
+
+  <h2 class="section">Plan general del producto</h2>
+  <div class="progress-track"><div class="progress-fill"></div></div>
+  <p style="color:var(--muted); font-size:13px; margin-top:8px;">1-4 completados · 5 (detección simulada) y 6 (IA) próximos</p>
+
+  <ul class="steps">
+    <li>
+      <div class="step-num done">1</div>
+      <div>
+        <b>Instalar Node.js y Docker Desktop</b>
+        <p>Node.js oficial instalado. Docker Desktop: pendiente (requiere permisos de administrador; no bloquea el funcionamiento actual porque PostgreSQL se instaló directamente en WSL).</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num done">2</div>
+      <div>
+        <b>PostgreSQL local</b>
+        <p>WSL 2 + Ubuntu 26.04 instalados y PostgreSQL 18 corriendo con base <code class="inline">visionbots</code> y usuario de desarrollo. Arranca automáticamente.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num done">3</div>
+      <div>
+        <b>Backend base</b>
+        <p>FastAPI + SQLAlchemy con CRUD de inventario, historial de movimientos, resumen de panel y health check. Conectado a PostgreSQL real.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num done">4</div>
+      <div>
+        <b>Frontend web</b>
+        <p>Panel en React + TypeScript + Vite para crear, buscar y archivar objetos; muestra el resumen del inventario. Compila correctamente.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">5</div>
+      <div>
+        <b>Detección simulada</b>
+        <p>Siguiente paso: cargar una imagen y simular una detección para probar todo el flujo antes de la IA real.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">6</div>
+      <div>
+        <b>IA real</b>
+        <p>Entrenar el modelo con imágenes etiquetadas de los objetos de la casa.</p>
+      </div>
+    </li>
+  </ul>
+
+  <h2 class="section">Estado de la infraestructura</h2>
+  <div class="cards">
+    <div class="card"><div class="num">WSL 2</div><div class="lbl">Ubuntu 26.04 LTS</div><div class="desc">Kernel 6.18 · modo NAT · arranque automático</div></div>
+    <div class="card"><div class="num">PostgreSQL 18</div><div class="lbl">Base: visionbots</div><div class="desc">Clúster en 127.0.0.1:5432 · systemd enable</div></div>
+    <div class="card"><div class="num">FastAPI</div><div class="lbl">Servicio visionbots-backend</div><div class="desc">uvicorn en 0.0.0.0:8000 · auto-reinicio</div></div>
+    <div class="card"><div class="num">React + Vite</div><div class="lbl">Panel web en Windows</div><div class="desc">TypeScript · build 197 kB · apunta a localhost:8000</div></div>
+  </div>
+
+  <h2 class="section">API pública</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Endpoints disponibles</h3>
+      <table>
+        <tr><th>Método</th><th>Ruta</th><th>Función</th></tr>
+        <tr><td><span class="tag ok">GET</span></td><td class="mono">/api/v1/health</td><td>Estado del servicio</td></tr>
+        <tr><td><span class="tag info">POST</span></td><td class="mono">/api/v1/inventory</td><td>Crear objeto</td></tr>
+        <tr><td><span class="tag ok">GET</span></td><td class="mono">/api/v1/inventory</td><td>Listar / buscar</td></tr>
+        <tr><td><span class="tag ok">GET</span></td><td class="mono">/api/v1/inventory/{id}</td><td>Detalle</td></tr>
+        <tr><td><span class="tag warn">PATCH</span></td><td class="mono">/api/v1/inventory/{id}</td><td>Editar</td></tr>
+        <tr><td><span class="tag info">POST</span></td><td class="mono">/api/v1/inventory/{id}/archive</td><td>Archivar</td></tr>
+        <tr><td><span class="tag ok">GET</span></td><td class="mono">/api/v1/inventory/{id}/events</td><td>Historial</td></tr>
+        <tr><td><span class="tag ok">GET</span></td><td class="mono">/api/v1/dashboard</td><td>Resumen del panel</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>Documentación interactiva</h3>
+      <div class="urlbar">http://localhost:8000/docs</div>
+      <p style="color:var(--muted); font-size:13.5px; margin-top:14px;">
+        Swagger UI para probar cada endpoint desde el navegador. El health check
+        confirma que el backend está conectado a PostgreSQL.
+      </p>
+      <div class="urlbar" style="margin-top:14px;">http://localhost:8000/api/v1/health</div>
+    </div>
+  </div>
+
+  <h2 class="section">Diseño de datos</h2>
+  <div class="panel">
+    <table>
+      <tr><th>Tabla</th><th>Propósito</th><th>Campos principales</th></tr>
+      <tr>
+        <td class="mono">items</td>
+        <td>Inventario de objetos</td>
+        <td class="mono">name, category, description, quantity, location, status, image_url</td>
+      </tr>
+      <tr>
+        <td class="mono">item_events</td>
+        <td>Historial inmutable de movimientos</td>
+        <td class="mono">item_id, action, detail, created_at</td>
+      </tr>
+    </table>
+    <p style="color:var(--muted); font-size:13px; margin-top:12px;">
+      Cada alta, edición o archivo registra un evento. Este historial será la base de la auditoría
+      cuando la IA mueva objetos automáticamente.
+    </p>
+  </div>
+
+  <h2 class="section">Prueba de validación</h2>
+  <div class="panel">
+    <h3>Flujo completo ejecutado contra PostgreSQL real (de Windows a WSL)</h3>
+    <table>
+      <tr><th>#</th><th>Operación</th><th>Resultado</th></tr>
+      <tr><td>1</td><td>Crear "Audifonos Sony"</td><td><span class="tag ok">201 creado</span></td></tr>
+      <tr><td>2</td><td>Crear "Cargador USB-C"</td><td><span class="tag ok">201 creado</span></td></tr>
+      <tr><td>3</td><td>Listar inventario</td><td><span class="tag ok">2 objetos</span></td></tr>
+      <tr><td>4</td><td>Consultar historial del objeto</td><td><span class="tag ok">Evento created</span></td></tr>
+      <tr><td>5</td><td>Editar cantidad y ubicación</td><td><span class="tag ok">quantity 2 · Cajon 3</span></td></tr>
+      <tr><td>6</td><td>Archivar objeto</td><td><span class="tag ok">status archived</span></td></tr>
+      <tr><td>7</td><td>Resumen del panel</td><td><span class="tag ok">2 objetos · 1 activo · 1 archivado</span></td></tr>
+      <tr><td>8</td><td>Buscar "audif"</td><td><span class="tag ok">1 resultado</span></td></tr>
+      <tr><td>9</td><td>Reiniciar backend y verificar persistencia</td><td><span class="tag ok">Datos intactos</span></td></tr>
+    </table>
+  </div>
+
+  <h2 class="section">Problemas resueltos</h2>
+  <div class="panel">
+    <ul style="list-style:none;">
+      <li style="padding:10px 0; border-bottom:1px solid var(--border);">
+        <b>Docker Desktop no instalable (pide permisos de administrador).</b>
+        <p style="color:var(--muted); font-size:13.5px;">Solución: PostgreSQL instalado directamente en Ubuntu WSL. Docker queda documentado como alternativa cuando se pueda instalar.</p>
+      </li>
+      <li style="padding:10px 0; border-bottom:1px solid var(--border);">
+        <b>WSL con error <i>REGDB_E_CLASSNOTREG</i>.</b>
+        <p style="color:var(--muted); font-size:13.5px;">Se reparó la instalación de WSL y se instaló Ubuntu 26.04 correctamente.</p>
+      </li>
+      <li style="padding:10px 0; border-bottom:1px solid var(--border);">
+        <b>Conexiones TCP Windows→WSL inestables.</b>
+        <p style="color:var(--muted); font-size:13.5px;">El túnel localhost de WSL corta conexiones persistentes. Solución: backend y base de datos corren juntos dentro de WSL (loopback nativo, estable). El frontend en Windows se comunica por HTTP normal.</p>
+      </li>
+      <li style="padding:10px 0; border-bottom:1px solid var(--border);">
+        <b>La VM de WSL se apagaba sola al cerrar la última terminal.</b>
+        <p style="color:var(--muted); font-size:13.5px;">Cada sesión de un solo uso dejaba el sistema sin API. Solución: sesión persistente de WSL en segundo plano desde el inicio de sesión de Windows que mantiene encendida la VM. Probado con 6/6 peticiones estables sin tocar la VM.</p>
+      </li>
+      <li style="padding:4px 0;">
+        <b>Conexiones que se colgaban sin límite.</b>
+        <p style="color:var(--muted); font-size:13.5px;">Se añadió <code class="inline">connect_timeout=5</code> y verificación previa de conexión en el pool para que un corte de red falle rápido y se recupere.</p>
+      </li>
+    </ul>
+  </div>
+
+  <h2 class="section">Abrir la aplicación</h2>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Inicio de un solo clic</h3>
+      <p style="font-size:13.5px; color:var(--muted);">Levanta la VM de WSL, asegura PostgreSQL y el backend, y abre el panel:</p>
+      <pre>& "C:\Users\Duvan Altamar\Documents\ChatGPT\Vision-Box\VisionBots-App\scripts\Start-VisionBots.ps1"</pre>
+      <p style="font-size:13.5px; color:var(--muted); margin-top:10px;">
+        Un script en la carpeta de Inicio de Windows mantiene la VM encendida (<code class="inline">VisionBots-KeepWSL.cmd</code>),
+        así la API responde sin abrir terminales.
+      </p>
+    </div>
+    <div class="panel">
+      <h3>Frontend (Windows)</h3>
+      <pre>cd frontend
+& "C:\Program Files\nodejs\npm.cmd" run dev</pre>
+      <p style="font-size:13.5px; color:var(--muted); margin-top:10px;">Abrir <code class="inline">http://localhost:5173</code>.</p>
+      <p style="font-size:13.5px; color:var(--muted); margin-top:10px;">Swagger: <code class="inline">http://localhost:8000/docs</code></p>
+    </div>
+  </div>
+
+  <h2 class="section">Glosario técnico</h2>
+  <p style="color:var(--muted); font-size:13.5px; max-width:820px;">
+    Todos los términos, herramientas y siglas usados durante el desarrollo (por Codex y en esta sesión),
+    explicados en lenguaje claro.
+  </p>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Infraestructura y sistema operativo</h3>
+    <table>
+      <tr><th style="width:34%;">Término</th><th>Descripción</th></tr>
+      <tr><td class="mono">Windows 11 (25H2)</td><td>El sistema operativo del equipo donde corre todo.</td></tr>
+      <tr><td class="mono">WSL 2</td><td>"Windows Subsystem for Linux 2": tecnología de Microsoft para correr Linux dentro de Windows sin instalar otro sistema.</td></tr>
+      <tr><td class="mono">Ubuntu 26.04 LTS</td><td>La distribución de Linux instalada dentro de WSL (el "sistema operativo invitado").</td></tr>
+      <tr><td class="mono">VM (máquina virtual)</td><td>El entorno Linux aislado que WSL crea; tiene su propia memoria y disco.</td></tr>
+      <tr><td class="mono">Kernel</td><td>El núcleo del sistema Linux (aquí, 6.18) que gestiona el hardware y los procesos.</td></tr>
+      <tr><td class="mono">systemd</td><td>El sistema de servicios de Linux: enciende y controla programas automáticamente.</td></tr>
+      <tr><td class="mono">Servicio / systemctl</td><td>Un programa que queda corriendo en segundo plano. <code class="inline">systemctl status</code> lo consulta, <code class="inline">start/stop</code> lo detiene o inicia.</td></tr>
+      <tr><td class="mono">Docker Desktop</td><td>Programa para correr aplicaciones en "contenedores". Pidió permisos de administrador y por eso se sustituyó por PostgreSQL directo en WSL.</td></tr>
+      <tr><td class="mono">compose.yaml</td><td>Archivo de Docker que define los servicios (base de datos, etc.). Queda como alternativa documentada.</td></tr>
+      <tr><td class="mono">.wslconfig</td><td>Archivo de configuración de WSL en Windows. Se probó "red espejo" (mirrored); quedó en el modo NAT por defecto.</td></tr>
+      <tr><td class="mono">Relay / túnel localhost</td><td>El mecanismo de WSL que permite que Windows alcance con "localhost" los puertos que corren dentro de Linux.</td></tr>
+      <tr><td class="mono">NAT</td><td>Modo de red por defecto de WSL: la VM tiene su propia IP interna y Windows se comunica por el túnel.</td></tr>
+      <tr><td class="mono">Keep-alive</td><td>Una sesión persistente que mantiene encendida la VM de WSL para que la API nunca se "duerma".</td></tr>
+      <tr><td class="mono">Carpeta de Inicio (Startup)</td><td>Carpeta de Windows que ejecuta programas automáticamente al iniciar sesión; allí vive <code class="inline">VisionBots-KeepWSL.cmd</code>.</td></tr>
+      <tr><td class="mono">PowerShell</td><td>La terminal y lenguaje de comandos de Windows que se usó para instalar, probar y operar.</td></tr>
+    </table>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Base de datos</h3>
+    <table>
+      <tr><th style="width:34%;">Término</th><th>Descripción</th></tr>
+      <tr><td class="mono">PostgreSQL 18</td><td>El motor de base de datos (el "almacén" de los datos). Es robusto y apto para crecer.</td></tr>
+      <tr><td class="mono">SQLite</td><td>Base de datos en un solo archivo, sin servidor. Se usó como plan B rápido porque era 100% estable; PostgreSQL real ya está activo.</td></tr>
+      <tr><td class="mono">Base de datos <code class="inline">visionbots</code></td><td>El "contenedor" donde se guarda la información del producto, con su usuario <code class="inline">visionbots</code>.</td></tr>
+      <tr><td class="mono">Clúster</td><td>Un conjunto de bases de datos gestionado por una sola instalación de PostgreSQL (clúster "main", puerto 5432).</td></tr>
+      <tr><td class="mono">Tabla</td><td>Conjunto de datos con columnas y filas. Hay dos: <code class="inline">items</code> (objetos) y <code class="inline">item_events</code> (historial).</td></tr>
+      <tr><td class="mono">Schema / modelo</td><td>La estructura definida de las tablas (qué columnas y tipos tiene cada una).</td></tr>
+      <tr><td class="mono">Query / consulta</td><td>Una instrucción SQL para leer o escribir datos (ej. <code class="inline">select count(*) from items</code>).</td></tr>
+      <tr><td class="mono">Migraciones</td><td>Cambios versionados del esquema de la base de datos (aún pendientes de montar).</td></tr>
+      <tr><td class="mono">CRUD</td><td>Las 4 operaciones básicas sobre datos: Crear, Leer, Actualizar y Borrar.</td></tr>
+      <tr><td class="mono">Persistencia</td><td>Que los datos sobreviven a reinicios. Se verificó reiniciando el backend y los objetos seguían ahí.</td></tr>
+      <tr><td class="mono">Pool de conexiones</td><td>Grupo de conexiones reutilizadas a la base para ir más rápido; se configuró con verificación previa (<code class="inline">pre_ping</code>).</td></tr>
+    </table>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Backend (la API)</h3>
+    <table>
+      <tr><th style="width:34%;">Término</th><th>Descripción</th></tr>
+      <tr><td class="mono">Backend</td><td>El "servidor". Programa que procesa peticiones y guarda/lee los datos. Aquí corre dentro de WSL.</td></tr>
+      <tr><td class="mono">API</td><td>"Application Programming Interface": reglas para que programas se comuniquen entre sí.</td></tr>
+      <tr><td class="mono">Endpoint</td><td>Cada dirección URL que la API ofrece (ej. <code class="inline">/api/v1/inventory</code>).</td></tr>
+      <tr><td class="mono">FastAPI</td><td>El framework de Python con el que se construyó la API del backend.</td></tr>
+      <tr><td class="mono">Uvicorn</td><td>El servidor que ejecuta y sirve la aplicación FastAPI (en 0.0.0.0:8000).</td></tr>
+      <tr><td class="mono">SQLAlchemy</td><td>Biblioteca de Python que conecta el backend con PostgreSQL y define las tablas.</td></tr>
+      <tr><td class="mono">psycopg</td><td>El "conductor" que permite a Python hablar el protocolo de PostgreSQL.</td></tr>
+      <tr><td class="mono">venv</td><td>"Entorno virtual" de Python: carpeta con el Python y las librerías del proyecto aisladas (<code class="inline">/opt/visionbots/venv</code>).</td></tr>
+      <tr><td class="mono">pip</td><td>El instalador de paquetes de Python (ej. <code class="inline">pip install fastapi</code>).</td></tr>
+      <tr><td class="mono">.env</td><td>Archivo con variables de configuración (la URL de la base, puerto CORS, etc.). No se sube a Git.</td></tr>
+      <tr><td class="mono">.env.example</td><td>Plantilla del .env para que cualquiera sepa qué variables se necesitan.</td></tr>
+      <tr><td class="mono">CORS</td><td>Regla de seguridad que el navegador aplica; el backend permite el puerto 5173 del frontend.</td></tr>
+      <tr><td class="mono">Health check</td><td>Endpoint de estado (<code class="inline">/api/v1/health</code>) que devuelve "online" si todo va bien.</td></tr>
+      <tr><td class="mono">JSON</td><td>Formato de texto con el que la API se comunica (claves y valores).</td></tr>
+      <tr><td class="mono">GET / POST / PATCH</td><td>Métodos HTTP: GET lee, POST crea, PATCH edita, etc.</td></tr>
+      <tr><td class="mono">Swagger / OpenAPI</td><td>Página web interactiva (<code class="inline">/docs</code>) para probar cada endpoint desde el navegador.</td></tr>
+    </table>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Frontend (la web)</h3>
+    <table>
+      <tr><th style="width:34%;">Término</th><th>Descripción</th></tr>
+      <tr><td class="mono">Frontend</td><td>La parte visible: la página web que el usuario abre en el navegador.</td></tr>
+      <tr><td class="mono">React</td><td>Biblioteca de JavaScript para construir interfaces de usuario.</td></tr>
+      <tr><td class="mono">TypeScript</td><td>JavaScript con tipos: evita errores antes de ejecutar.</td></tr>
+      <tr><td class="mono">Vite</td><td>Herramienta que compila el frontend y lo sirve en modo desarrollo (puerto 5173).</td></tr>
+      <tr><td class="mono">Node.js</td><td>Entorno que ejecuta JavaScript fuera del navegador; necesario para construir el frontend.</td></tr>
+      <tr><td class="mono">npm</td><td>El gestor de paquetes de Node (<code class="inline">npm run dev</code> enciende el panel).</td></tr>
+      <tr><td class="mono">Panel / Dashboard</td><td>La pantalla principal con resúmenes: totales, objetos activos y archivados.</td></tr>
+      <tr><td class="mono">Inventario</td><td>La lista de objetos registrados con su cantidad y ubicación.</td></tr>
+      <tr><td class="mono">Bandeja de detecciones</td><td>Pantalla futura donde la IA sugerirá objetos a partir de fotos para aprobarlos o corregirlos.</td></tr>
+      <tr><td class="mono">Build / compilar</td><td>Transformar el código en archivos listos para el navegador (<code class="inline">npm run build</code>).</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Producto y siguiente fase</h3>
+    <table>
+      <tr><th style="width:34%;">Término</th><th>Descripción</th></tr>
+      <tr><td class="mono">MVP</td><td>"Producto Mínimo Viable": la versión más pequeña que ya sirve (registrar y consultar inventario).</td></tr>
+      <tr><td class="mono">IA / modelo</td><td>El lote que reconocerá objetos por imagen (se entrena con fotos etiquetadas; el paso 6 del plan).</td></tr>
+      <tr><td class="mono">Etiquetado de imágenes</td><td>Marcar en las fotos qué objeto aparece y dónde: los datos con los que se entrena la IA.</td></tr>
+      <tr><td class="mono">Detección simulada</td><td>Paso 5 del plan: probar el flujo con una "detección falsa" antes de conectar la IA real.</td></tr>
+      <tr><td class="mono">OpenCV / YOLO</td><td>Bibliotecas típicas de visión por computadora mencionadas en el README para la futura IA.</td></tr>
+      <tr><td class="mono">PIL / Pillow</td><td>Bibliotecas de Python para procesar imágenes (candidatas para subir fotos).</td></tr>
+      <tr><td class="mono">Historial / item_events</td><td>Registro inmutable de cada movimiento (creado, editado, archivado) con fecha.</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    Informe generado el 5/sep/2026 · Backend + PostgreSQL en WSL · Frontend React en Windows · Datos verificados con prueba HTTP real
+  </footer>
+</div>
+</body>
+</html>

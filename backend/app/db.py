@@ -14,6 +14,10 @@ engine_options: dict[str, object] = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     engine_options["connect_args"] = {"check_same_thread": False}
 
+if not settings.DATABASE_URL.startswith("sqlite"):
+    engine_options["pool_pre_ping"] = True
+    engine_options["pool_recycle"] = 120
+
 engine = create_engine(settings.DATABASE_URL, **engine_options)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
