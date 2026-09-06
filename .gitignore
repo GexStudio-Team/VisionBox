@@ -30,6 +30,7 @@ venv/
 # Build
 build/
 dist/
+.vite/
 *.egg-info/
 node_modules/
 
